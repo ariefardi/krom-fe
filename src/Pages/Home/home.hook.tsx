@@ -15,6 +15,7 @@ const useHomeHooks = () => {
     keyword: '',
     location: '',
     jobType: '',
+    job: '',
     status: '',
     limit: 14,
     page: 1,
@@ -31,8 +32,22 @@ const useHomeHooks = () => {
 
   const handleChangeJob = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const find = roles.find(r => r.role_name == e.target.value);
-
-    setFilters(prev => ({ ...prev, job: find?.id, page: 1 })); // Reset page when filtering
+    if (find) {
+      setFilters(prev => ({
+        ...prev,
+        jobType: String(find?.role_name),
+        job: String(find?.id),
+        page: 1,
+      }));
+    } else {
+      setFilters(prev => ({
+        ...prev,
+        jobType: '',
+        job: '',
+        page: 1,
+      }));
+    }
+    // Reset page when filtering
   };
 
   const handlePagechange = (page: number) => {
@@ -63,6 +78,7 @@ const useHomeHooks = () => {
   const fetchRoles = useCallback(async () => {
     try {
       const response = await getRoles();
+
       setRoles(response?.data);
     } catch (error) {}
   }, []);
